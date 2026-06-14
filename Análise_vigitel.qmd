@@ -1,0 +1,179 @@
+---
+title: "Contraste de dados sobre saúde e bem-estar antes e pós-pandemia"
+subtitle: "Análise exploratória dos dados da VIGITEL dos anos 2019  e 2023."
+title-block-banner: "#5D91BD"
+linkcolor: "#5D91BD"
+format:
+  html:
+    theme: minty
+    embed-resources: true
+number-sections: true
+echo: false
+code-fold: FALSE
+author: Carolina Brito
+editor: visual
+data: 06/2026
+---
+
+## Contexto
+
+Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote **healthbR** do R para importar as variáveis desejadas. [^1]
+
+[^1]: **Bissoli S (2025). healthbR: Acesse Dados de Saúde Pública do Brasil. Pacote R versão 0.2.0**, <https://github.com/SidneyBissoli/healthbR.>
+
+Dentre os anos disponíveis foi escolhido os anos de 2019 e 2023 com o **objetivo de comparar os dados antes da pandemia e pós-pandemia, com variáveis relacionadas a saúde e bem-estar da população dos entrevistados.**Dentre as variáveis disponíveis foram escolhidas: doenças crônicas(diabetes, pressão alta), peso, consumo de álcool, atividade física e suas modalidades e tempo de uso de dispositivos eletrônicos (celular, notebook, tablet, etc) em momentos de lazer. Tenho como finalidade nesse projeto responder a seguinte questão : *É possível observar através desses dados coletados, mudanças significativas na saúde e no bem-estar da população dos entrevistados depois da pandemia ?*
+
+```{r}
+#| echo: false
+#| message: false
+
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(ggthemes)
+
+vigitel_19_23 <- read_rds("vigitel_19_23.rds")
+
+vigitel_19_23$ano <- as.factor(vigitel_19_23$ano)
+vigitel_19_23$modalidade[vigitel_19_23$modalidade== "igual"] <- NA
+vigitel_19_23$modalidade[vigitel_19_23$modalidade== "aumentada"] <- NA
+vigitel_19_23$peso[vigitel_19_23$peso > 200] <- NA
+
+```
+
+## Análise exploratória
+
+### *Comparando a proporção de respostas da variável: consumo de bebidas álcoolicas nos anos de 2019 e 2023.*
+
+Análisando os dados é possível notar um aumento na proporção de pessoas que consomem bebidas álcoolicas regulamente no ano de 2023 em comparação ao ano de 2019. Já que em 2019, 34% das pessoas responderam que consomem álcool regulamente e em 2023 foram 41%,tendo um aumento de 7%. [^2]
+
+[^2]: Nessa váriavel a três categorias possíveis de resposta : "não consumo", "sim", "sim,mas não no último mês".Nessa análise eu escolhi priorizar somente à categoria:"sim".
+
+### Análise de peso e doenças crônicas em relação a idade.
+
+Nesse gráfico o objetivo é análisar a frequência de pessoas com pressão alta associada a idade.
+
+```{r}
+#| echo: false
+#| warning: false
+dados_filtrados <- vigitel_19_23 |> filter(pressao_alta != "não lembra")
+
+dados_filtrados <- vigitel_19_23 |> filter(pressao_alta!= "não")
+
+
+ggplot(dados_filtrados, aes(x = idade, y = ..density..)) +
+  geom_histogram( color = "black", fill = "#5D91BD", ) +
+  facet_wrap(~ano) +
+  theme_classic() +
+  labs(title = "Pressão alta em relação a idade",
+       y = "Densidade",
+       x = "idades(anos)",
+       caption = "Fonte: Microdados do Vigitel Brasil 2019 e 2023, Ministério da Saúde.",
+       tag = "Figura 1")
+
+
+
+```
+
+Nessa tabela o objetivo e comparar a média e a convalência de variância de cada ano com variáveis relacionada a saúde dos entrevistados. **Tabela de análise descritiva de peso e doenças crônicas.**
+
+|                    | 2019 |     | 2023 |     |
+|--------------------|------|-----|------|-----|
+|                    | x̄    | CV  | x̄    | CV  |
+| peso               | 71   | 21  | 73   | 22  |
+| idade pressão alta | 64   | 21  | 60   | 24  |
+| idade diabéticos   | 66   | 18  | 62   | 21  |
+
+Observando a **Figura 1** em comunhão com a tabela acima é possível notar a diferença entre a distribuição de densidade dos dados em 2019 com 2023. Onde em 2019 o gráfico é mais "agudo" (os dados estão concentrados em uma parcela de idades) e em 2023 ele é mais disperso, variando mais as idades. Observando a tabela, no ano de 2023 a média de idade dos entrevistados com pressão alta e diabetes foi mais baixa que em 2019 e a covalência de variância calculada em 2023 foi mais alta que 2019. E por fim a média do peso aumentou em 2023.
+
+### Análise do bem-estar da popolução dos entrevistados em momentos de lazer.
+
+```{r}
+#| echo: false
+#| 
+freq_temp.tela <- table(vigitel_19_23$ano, vigitel_19_23$tempo_tela)
+freq_tela <- data.frame(prop.table(freq_temp.tela, margin=1))
+
+ ggplot(freq_tela, aes(x = Var1, y = Freq ,fill = Var2)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("#33608C","#DD708E","#5D91BD","#C28AB1","#C9DAF1","#FFB2B6","#787878","#1E1E1E"))+
+  labs(title = "Proporção de tempo de tela em momentos de lazer",
+       y = "Proporção",
+       x = "Ano",
+       fill = "Tempo",
+       tag = "Figura 2",
+       caption = "Fonte: Microdados do Vigitel Brasil 2019 e 2023, Ministério da Saúde.") -> grafico.tela
+ ggplotly(grafico.tela)
+```
+
+No gráfico acima é notável uma mudança relevante na proporção de entrevistados que usam menos de 1 hora de tela em momentos de lazer, **em 2023 diminuiu 8% em comparação a 2019.**
+
+```{r}
+#| echo: false
+#| messege: false
+dados <- vigitel_19_23 |> 
+  mutate(
+    modalidade2 = fct_collapse(modalidade,
+        "Corrida" = c("3","4"),
+        "Musculação" = "5",
+        "Ginástica" = c("6","7","8"),
+        "Natação" = "9",
+        "Artes marciais" = "10",
+        "Bicicleta" = "11",
+        "Futebol" = "12",
+        "Basquetebol" = "13",
+        "Voleibol/futevôlei" = "14",
+        "Tênis" = "15",
+        "Dança" = "16",
+        "Outros" = "17",
+        
+      ))
+
+dados <- dados %>%
+  mutate(
+    modalidade2 = na_if(as.character(modalidade2), "igual"),  
+    modalidade2 = factor(modalidade2)  
+  )
+dados <- dados %>%
+  mutate(
+    modalidade2 = na_if(as.character(modalidade2), "aumentada"),  
+    modalidade2 = factor(modalidade2)  
+  )
+
+```
+
+```{r}
+#| echo: false
+#| messege: false 
+dados <- na.exclude(dados,modalidade2)
+freq_modalidade <- table(dados$ano, dados$modalidade2)
+ f.mod <- data.frame(prop.table(freq_modalidade, margin=1))
+freq_m <- data.frame(freq_modalidade)
+
+
+ 
+ggplot(f.mod, aes(x = Var1, y = Freq ,fill = Var2)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = c("#33608C","yellow","#DD708E","#F4A652","#D64E45","#B81840","#5D91BD","#C28AB1","#C9DAF1","#FFB2B6","#787878","#1E1E1E")) +
+  labs(
+    y = "proporção",
+    x = "Ano", 
+    fill = "Modalidade",
+    title = (" Proporção de pessoas em cada modalidade de atividades físicas"),
+ caption = ("Fonte: Microdados do Vigitel Brasil 2019 e 2023, Ministério da Saúde."))  -> g.ex
+ggplotly(g.ex)
+```
+
+No gráfico acima a atividade física que mais se destaca é a musculação, e percebe-se que em 2023 ouve um aumento significativo de 11% nessa categoria em comparação ao ano de 2019.
+
+## Conclusão
+
+Portanto através dos resultados da análise exploratória é possível considerar nessa população de entrevistados [^3] que em 2023 ouve mais proporção de pessoas que bebem bebidas álcoolicas regulamente, mais pessoas jovens com pressão alta e diabetes e para finalizar o peso médio aumentou comparado ao ano de 2019. Sobre o bem-estar dos entrevistados em momento de lazer: diminuiu em 2023 a proporção de entrevistados que mexem menos de 1 hora em dispositivos eletônicos em momentos de lazer, e na escolha de uma modalidade de atividade física a musculação é a mais presente nos dois anos e cresce mais no ano de 2023.
+
+[^3]: mesmo sendo uma grande quantidade de entrevistados esses resultados não podem ser considerados para a população brasileira pois eles foram coletados **somente** em capitais dos estados e Distrito Federal.
+
+### Desafios e futuras análises
+
+A minha dificuldade nessa base de dados: seu *tamanho*, onde eu tive que reduzir as variáveis e sacrificar algumas que não tinha nos dois anos,e a *limpeza da base* pois tinha muitos elementos e categorias que atrapalhavam no momento do estudo. Uma possibilidade para futuras análises é adicionar os próximos anos (pós-pandemia) e fazer um estudo de 2 em 2 anos com essas variáveis estudadas ou com outras da base original.[^4]
+
+[^4]: já que todos anos eles fazem essa pesquisa.
