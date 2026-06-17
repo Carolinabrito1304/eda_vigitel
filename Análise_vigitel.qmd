@@ -17,7 +17,11 @@ data: 06/2026
 
 ## Contexto
 
+
 Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` do R para importar as variáveis desejadas. [^1]
+
+Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` do R para importar as variáveis desejadas. [^1]
+
 
 [^1]: **Bissoli S (2025). healthbR: Acesse Dados de Saúde Pública do Brasil. Pacote R versão 0.2.0**, <https://github.com/SidneyBissoli/healthbR.>
 
@@ -172,7 +176,7 @@ Portanto através dos resultados da análise exploratória é possível consider
 
 [^3]: mesmo sendo uma grande quantidade de entrevistados esses resultados não podem ser considerados para a população brasileira pois eles foram coletados **somente** em capitais dos estados e Distrito Federal.
 
-### Desafios e futuras análises.
+### Desafios e futuras análises
 
 A minha dificuldade nessa base de dados: seu *tamanho*, onde eu tive que reduzir as variáveis e sacrificar algumas que não tinha nos dois anos,e a *limpeza da base* pois tinha muitos elementos e categorias que atrapalhavam no momento do estudo. Uma possibilidade para futuras análises é adicionar os próximos anos (pós-pandemia) e fazer um estudo de 2 em 2 anos com essas variáveis estudadas ou com outras da base original.[^4]
 
