@@ -47,7 +47,7 @@ vigitel_19_23$peso[vigitel_19_23$peso > 200] <- NA
 
 ## Análise exploratória
 
-### *Comparando a proporção de respostas da variável: consumo de bebidas álcoolicas nos anos de 2019 e 2023.*
+### *Comparando a proporção de respostas da variável: consumo de bebidas alcoólicas nos anos de 2019 e 2023.*
 
 Análisando os dados é possível notar um aumento na proporção de pessoas que consomem bebidas alcoólicas regulamente no ano de 2023 em comparação ao ano de 2019. Já que em 2019, 34% das pessoas responderam que consomem álcool regulamente e em 2023 foram 41%,tendo um aumento de 7%. [^2]
 
