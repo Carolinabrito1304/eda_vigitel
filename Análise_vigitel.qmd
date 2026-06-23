@@ -181,8 +181,13 @@ No gráfico acima a atividade física que mais se destaca é a musculação, e p
 
 ## Conclusão
 
+<<<<<<< HEAD
 Portanto através dos resultados da análise exploratória é possível considerar nessa população de entrevistados [^3] que em 2023 ouve mais proporção de respondentes que bebem bebidas alcoólicas regulamente, entrevestidados mais novos com pressão alta e diabete e o peso médio aumentou comparado ao ano de 2019. 
 Sobre o bem-estar em momento de lazer: em 2023 o uso de dispositivos eletrônicos se tornou mais frequente entre os entrevistados já que a proporção de respondentes que passam menos tempo(menos de 1 hora) diminiu significamente.E na escolha de uma modalidade de atividade física a musculação é a resposta mais frequente nos dois anos e cresce mais no ano de 2023.
+=======
+Portanto através dos resultados da análise exploratória é possível considerar nessa população de entrevistados [^3] que em 2023 ouve mais proporção de entrevistados que bebem bebidas álcoolicas regulamente, entrevestidados mais novos com pressão alta e diabete e o peso médio aumentou comparado ao ano de 2019. 
+Sobre o bem-estar dos entrevistados em momento de lazer: em 2023 o uso de dispositivos eletrônicos se tornou mais frequente entre os entrevistados já que a proporção de respondentes que passam menos tempo(menos de 1 hora) diminiu significamente.E na escolha de uma modalidade de atividade física a musculação é a resposta mais frequente nos dois anos e cresce mais no ano de 2023.
+>>>>>>> df94af2b9fe007e56c9a6826c089e182e4b432e0
 
 [^3]: mesmo sendo uma grande quantidade de entrevistados esses resultados não podem ser considerados para a população brasileira pois eles foram coletados **somente** em capitais dos estados e Distrito Federal.
 
