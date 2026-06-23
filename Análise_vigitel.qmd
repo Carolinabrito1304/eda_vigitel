@@ -18,7 +18,8 @@ data: 06/2026
 
 ## Contexto
 
-Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` no R para importar as variáveis desejadas de forma mais simples. [^1]
+Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` do R para importar as variáveis desejadas. [^1]
+
 
 [^1]: **Bissoli S (2025). healthbR: Acesse Dados de Saúde Pública do Brasil. Pacote R versão 0.2.0**, <https://github.com/SidneyBissoli/healthbR.>
 
@@ -116,8 +117,6 @@ freq_tela|>
 No gráfico acima é notável uma mudança relevante na proporção de entrevistados que usam menos de 1 hora de tela em momentos de lazer, **em 2023 diminuiu 8% em comparação a 2019.**
 
 ```{r}
-#| echo: false
-#| messege: false
 #| warning: false
 dados <- vigitel_19_23 |> 
   mutate(
@@ -151,16 +150,14 @@ dados <- dados %>%
 ```
 
 ```{r}
-#| echo: false
-#| messege: false 
-#| 
+
 dados <- na.exclude(dados,modalidade2)
 freq_modalidade <- table(dados$ano, dados$modalidade2)
- f.mod <- data.frame(prop.table(freq_modalidade, margin=1))
-freq_m <- data.frame(freq_modalidade)
-mutate(f.mod,"Ano"= f.mod$Var1)
 
-f.mod |>
+```
+
+```{r}
+ data.frame(prop.table(freq_modalidade, margin=1)) |>
    mutate(Var1 = Var1 |>  fct_infreq() |> fct_rev()) |>  
 ggplot(aes(x = Var1, y = Freq ,fill = Var2)) +
   geom_bar(stat = "identity", position = "dodge") +
