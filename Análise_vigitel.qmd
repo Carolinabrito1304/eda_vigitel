@@ -10,6 +10,7 @@ format:
 number-sections: true
 echo: false
 code-fold: FALSE
+messege: FALSE
 author: Carolina Brito
 editor: visual
 data: 06/2026
@@ -17,12 +18,13 @@ data: 06/2026
 
 ## Contexto
 
-
-Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` do R para importar as variáveis desejadas. [^1]
+Para esse projeto eu decedi trabalhar com a base de dados da [**VIGITEL**](https://svs.aids.gov.br/daent/cgdnt/vigitel/) **(Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquerito Telefônico)** é uma edição anual de pesquisa telefônica realizada pelo Ministério da Saúde do Brasil desde 2006. Monitora fatores de risco e proteção para doenças crônicas não transmissíveis entre adultos (18+) em todas as 26 capitais estaduais e o Distrito Federal.Por ela ter uma grande quantidade de dados,foi usado o pacote `healthbR` no R para importar as variáveis desejadas de forma mais simples. [^1]
 
 [^1]: **Bissoli S (2025). healthbR: Acesse Dados de Saúde Pública do Brasil. Pacote R versão 0.2.0**, <https://github.com/SidneyBissoli/healthbR.>
 
-Dentre os anos disponíveis foi escolhido os anos de 2019 e 2023 com o **objetivo de comparar os dados antes da pandemia e pós-pandemia, com variáveis relacionadas a saúde e bem-estar da população dos entrevistados.**Dentre as variáveis disponíveis foram escolhidas: doenças crônicas(diabetes, pressão alta), peso, consumo de álcool, atividade física e suas modalidades e tempo de uso de dispositivos eletrônicos (celular, notebook, tablet, etc) em momentos de lazer. Tenho como finalidade nesse projeto responder a seguinte questão : *É possível observar através desses dados coletados, mudanças significativas na saúde e no bem-estar da população dos entrevistados depois da pandemia ?*
+Dentre os anos disponíveis foi escolhido os anos de 2019(52.443 entrevistados) e 2023(21.600 entrevistados) com o **objetivo de comparar os dados antes da pandemia e pós-pandemia, com variáveis relacionadas a saúde e bem-estar da população dos entrevistados.**Dentre as variáveis disponíveis foram escolhidas: doenças crônicas(diabetes, pressão alta), peso, consumo de álcool, atividade física e suas modalidades e tempo de uso de dispositivos eletrônicos (celular, notebook, tablet, etc) em momentos de lazer. Tenho como finalidade nesse projeto responder a seguinte questão :
+
+*É possível observar através desses dados coletados, mudanças significativas na saúde e no bem-estar da população dos entrevistados depois da pandemia ?*
 
 ```{r}
 #| echo: false
@@ -32,7 +34,7 @@ library(tidyverse)
 library(plotly)
 library(knitr)
 library(ggthemes)
-
+theme_set(theme_classic())
 vigitel_19_23 <- read_rds("vigitel_19_23.rds")
 
 vigitel_19_23$ano <- as.factor(vigitel_19_23$ano)
@@ -76,7 +78,9 @@ ggplot(dados_filtrados, aes(x = idade, y = ..density..)) +
 
 ```
 
-Nessa tabela o objetivo e comparar a média e a convalência de variância de cada ano com variáveis relacionada a saúde dos entrevistados. **Tabela de análise descritiva de peso e doenças crônicas.**
+Nessa tabela o objetivo e comparar a média e a convalência de variância de cada ano com variáveis relacionada a saúde dos entrevistados. 
+
+**Tabela de análise descritiva de peso e doenças crônicas.**
 
 |                    | 2019 |     | 2023 |     |
 |--------------------|------|-----|------|-----|
@@ -85,13 +89,13 @@ Nessa tabela o objetivo e comparar a média e a convalência de variância de ca
 | idade pressão alta | 64   | 21  | 60   | 24  |
 | idade diabéticos   | 66   | 18  | 62   | 21  |
 
-Observando a **Figura 1** em comunhão com a tabela acima é possível notar a diferença entre a distribuição de densidade dos dados em 2019 com 2023. Onde em 2019 o gráfico é mais "agudo" (os dados estão concentrados em uma parcela de idades) e em 2023 ele é mais disperso, variando mais as idades. Observando a tabela, no ano de 2023 a média de idade dos entrevistados com pressão alta e diabetes foi mais baixa que em 2019 e a covalência de variância calculada em 2023 foi mais alta que 2019. E por fim a média do peso aumentou em 2023.
+Observando a **Figura 1** em comunhão com a tabela acima é possível notar a diferença entre a distribuição de densidade dos dados em 2019 com 2023. Onde vemos que em 2019 o gráfico é mais *"agudo"* (os dados estão concentrados em uma parcela das idades) e em 2023 ele é mais *disperso*, variando mais as idades. Observando a tabela, no ano de 2023 a média de idade dos entrevistados com pressão alta e diabetes foi mais baixa que em 2019 e o coeficiente de variação calculada em 2023 foi mais alto que 2019 em todas as variáveis da tabela, sendo possível ver esse aumento na dispersão dos dados também através da análise descritiva nessas variáveis. E por fim a média do peso aumentou em 2023.
 
 ### Análise do bem-estar da popolução dos entrevistados em momentos de lazer.
 
 ```{r}
 #| echo: false
-#| 
+
 freq_temp.tela <- table(vigitel_19_23$ano, vigitel_19_23$tempo_tela)
 freq_tela <- data.frame(prop.table(freq_temp.tela, margin=1))
 
@@ -114,6 +118,7 @@ No gráfico acima é notável uma mudança relevante na proporção de entrevist
 ```{r}
 #| echo: false
 #| messege: false
+#| warning: false
 dados <- vigitel_19_23 |> 
   mutate(
     modalidade2 = fct_collapse(modalidade,
@@ -148,11 +153,12 @@ dados <- dados %>%
 ```{r}
 #| echo: false
 #| messege: false 
+#| 
 dados <- na.exclude(dados,modalidade2)
 freq_modalidade <- table(dados$ano, dados$modalidade2)
  f.mod <- data.frame(prop.table(freq_modalidade, margin=1))
 freq_m <- data.frame(freq_modalidade)
-
+mutate(f.mod,"Ano"= f.mod$Var1)
 
 f.mod |>
    mutate(Var1 = Var1 |>  fct_infreq() |> fct_rev()) |>  
@@ -172,7 +178,7 @@ No gráfico acima a atividade física que mais se destaca é a musculação, e p
 
 ## Conclusão
 
-Portanto através dos resultados da análise exploratória é possível considerar nessa população de entrevistados [^3] que em 2023 ouve mais proporção de pessoas que bebem bebidas álcoolicas regulamente, mais pessoas jovens com pressão alta e diabetes e para finalizar o peso médio aumentou comparado ao ano de 2019. Sobre o bem-estar dos entrevistados em momento de lazer: diminuiu em 2023 a proporção de entrevistados que mexem menos de 1 hora em dispositivos eletônicos em momentos de lazer, e na escolha de uma modalidade de atividade física a musculação é a mais presente nos dois anos e cresce mais no ano de 2023.
+Portanto através dos resultados da análise exploratória é possível considerar nessa população de entrevistados [^3] que em 2023 ouve mais proporção de pessoas que bebem bebidas álcoolicas regulamente, mais pessoas com idades menores com pressão alta e diabetes e para finalizar o peso médio aumentou comparado ao ano de 2019. Sobre o bem-estar dos entrevistados em momento de lazer: diminuiu em 2023 a proporção de entrevistados que mexem menos de 1 hora em dispositivos eletônicos em momentos de lazer, e na escolha de uma modalidade de atividade física a musculação é a mais presente nos dois anos e cresce mais no ano de 2023.
 
 [^3]: mesmo sendo uma grande quantidade de entrevistados esses resultados não podem ser considerados para a população brasileira pois eles foram coletados **somente** em capitais dos estados e Distrito Federal.
 
@@ -182,53 +188,25 @@ A minha dificuldade nessa base de dados: seu *tamanho*, onde eu tive que reduzir
 
 [^4]: já que todos anos eles fazem essa pesquisa.
 
+## Referências
 
-## Referências 
-Brasil. Ministério da Saúde. Secretaria de Vigilância em Saúde. Departamento de Análise em Saúde e Vigilância de Doenças 
-Não Transmissíveis.
-Vigitel Brasil 2019 : vigilância de fatores de risco e proteção para doenças crônicas por inquérito telefônico : estimativas 
-sobre frequência e distribuição sociodemográfica de fatores de risco e proteção para doenças crônicas nas capitais dos 26
-estados brasileiros e no Distrito Federal em 2019 [recurso eletrônico]  / Ministério da Saúde, Secretaria de Vigilância em Saúde, 
-Departamento de Análise em Saúde e Vigilância de Doenças não Transmissíveis.  Disponível em: [<https://svs.aids.gov.br/daent/cgdnt/vigitel/>]. Acesso em: [abril de 2026].
+Brasil. Ministério da Saúde. Secretaria de Vigilância em Saúde. Departamento de Análise em Saúde e Vigilância de Doenças Não Transmissíveis. Vigitel Brasil 2019 : vigilância de fatores de risco e proteção para doenças crônicas por inquérito telefônico : estimativas sobre frequência e distribuição sociodemográfica de fatores de risco e proteção para doenças crônicas nas capitais dos 26 estados brasileiros e no Distrito Federal em 2019 \[recurso eletrônico\] / Ministério da Saúde, Secretaria de Vigilância em Saúde, Departamento de Análise em Saúde e Vigilância de Doenças não Transmissíveis. Disponível em: \[<https://svs.aids.gov.br/daent/cgdnt/vigitel/>\]. Acesso em: \[abril de 2026\].
 
-Brasil. Ministério da Saúde. Secretaria de Vigilância em Saúde e Ambiente. Departamento de Análise Epidemiológica e Vigilância  
-           de Doenças Não Transmissíveis.
-Vigitel Brasil 2023: vigilância de fatores de risco e proteção para doenças crônicas por inquérito telefônico: estimativas 
-sobre frequência e distribuição sociodemográfica de fatores de risco e proteção para doenças crônicas nas capitais dos 26
-estados brasileiros e no Distrito Federal em 2023 [recurso eletrônico] / Ministério da Saúde, Secretaria de Vigilância em Saúde 
-e Ambiente, Departamento de Análise Epidemiológica e Vigilância de Doenças Não Transmissíveis.Disponível em: [<https://svs.aids.gov.br/daent/cgdnt/vigitel/>]. Acesso em: [abril de 2026].
+Brasil. Ministério da Saúde. Secretaria de Vigilância em Saúde e Ambiente. Departamento de Análise Epidemiológica e Vigilância\
+de Doenças Não Transmissíveis. Vigitel Brasil 2023: vigilância de fatores de risco e proteção para doenças crônicas por inquérito telefônico: estimativas sobre frequência e distribuição sociodemográfica de fatores de risco e proteção para doenças crônicas nas capitais dos 26 estados brasileiros e no Distrito Federal em 2023 \[recurso eletrônico\] / Ministério da Saúde, Secretaria de Vigilância em Saúde e Ambiente, Departamento de Análise Epidemiológica e Vigilância de Doenças Não Transmissíveis.Disponível em: \[<https://svs.aids.gov.br/daent/cgdnt/vigitel/>\]. Acesso em: \[abril de 2026\].
 
- Wickham H, Averick M, Bryan J,
-  Chang W, McGowan LD, François R,
-  Grolemund G, Hayes A, Henry L,
-  Hester J, Kuhn M, Pedersen TL,
-  Miller E, Bache SM, Müller K,
-  Ooms J, Robinson D, Seidel DP,
-  Spinu V, Takahashi K, Vaughan D,
-  Wilke C, Woo K, Yutani H (2019).
-  “Welcome to the tidyverse.”
-  _Journal of Open Source
-  Software_, *4*(43), 1686.
-  doi:10.21105/joss.01686
-  <https://doi.org/10.21105/joss.01686>.
-  
-  C. Sievert. Interactive
-  Web-Based Data Visualization
-  with R, plotly, and shiny.
-  Chapman and Hall/CRC Florida,
-  2020.
+R version 4.5.3 (2026-03-11 ucrt) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
- Xie Y (2025). _knitr: A
-  General-Purpose Package for
-  Dynamic Report Generation in R_.
-  R package version 1.51,
-  <https://yihui.org/knitr/>.
-  
-  Arnold J (2025). _ggthemes:
-  Extra Themes, Scales and Geoms
-  for 'ggplot2'_. R package
-  version 5.2.0,
-  <https://jrnold.github.io/ggthemes/>.
-  
-  Bissoli S (2025). _healthbR: Access Brazilian Public Health Data_. R package version 0.2.0,
-  <https://github.com/SidneyBissoli/healthbR>.
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” *Journal of Open Source Software*, *4*(43), 1686. doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
+
+C. Sievert. Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC Florida, 2020.
+
+Xie Y (2025). *knitr: A General-Purpose Package for Dynamic Report Generation in R*. R package version 1.51, <https://yihui.org/knitr/>.
+
+Arnold J (2025). *ggthemes: Extra Themes, Scales and Geoms for 'ggplot2'*. R package version 5.2.0, <https://jrnold.github.io/ggthemes/>.
+
+Bissoli S (2025). *healthbR: Access Brazilian Public Health Data*. R package version 0.2.0, <https://github.com/SidneyBissoli/healthbR>.
+
+ 
